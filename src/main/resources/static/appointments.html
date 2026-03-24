@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>HMS - Appointments</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        body{font-family: Arial, sans-serif; max-width:900px;margin:24px auto;padding:0 12px;}
+        h1,h2{color:#2c3e50}
+        form {background:#f7f9fb;padding:16px;border-radius:6px;margin-bottom:16px}
+        label{display:block;margin:8px 0 4px;font-weight:600}
+        input,button,select{padding:8px;font-size:14px;width:100%;box-sizing:border-box}
+        .row{display:flex;gap:12px}
+        .col{flex:1}
+        table{width:100%;border-collapse:collapse;margin-top:8px}
+        th,td{padding:8px;border:1px solid #e2e8f0;text-align:left}
+        .muted{color:#6b7280;font-size:13px}
+    </style>
+</head>
+<body>
+<h1>Hospital Management — Appointments</h1>
+
+<section>
+    <h2>Book Appointment</h2>
+    <form id="apptForm">
+        <label for="patientSelect">Patient</label>
+        <select id="patientSelect" required>
+            <option value="">Loading patients…</option>
+        </select>
+
+        <label for="provider">Provider (doctor)</label>
+        <input id="provider" placeholder="Dr. Sharma" required>
+
+        <div class="row">
+            <div class="col">
+                <label for="start">Start time</label>
+                <input id="start" type="datetime-local" required>
+            </div>
+            <div class="col">
+                <label for="end">End time</label>
+                <input id="end" type="datetime-local" required>
+            </div>
+        </div>
+
+        <div style="margin-top:12px">
+            <button type="submit">Book Appointment</button>
+        </div>
+    </form>
+
+    <div id="apptMsg" class="muted"></div>
+</section>
+
+<section>
+    <h2>Upcoming Appointments</h2>
+    <div id="apptsContainer" class="muted">Loading...</div>
+</section>
+
+<script>
+    const apiBase = '/api';
+
+    async function loadPatientsIntoSelect() {
+      const sel = document.getElementById('patientSelect');
+      sel.innerHTML = '<option value="">Loading patients…</option>';
+      try {
+        const res = await fetch(`${apiBase}/patients`);
+        if(!res.ok) { sel.innerHTML = '<option value="">Failed to load</option>'; return; }
+        const patients = await res.json();
+        if(!patients.length) { sel.innerHTML = '<option value="">No patients found</option>'; return; }
+        sel.innerHTML = '<option value="">-- Select patient --</option>';
+        patients.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = `${p.name} (id:${p.id})`;
+          sel.appendChild(opt);
+        });
+      } catch (err) {
+        sel.innerHTML = '<option value="">Error loading</option>';
+      }
+    }
+
+    async function fetchAppointments() {
+      const res = await fetch(`${apiBase}/appointments`);
+      if(!res.ok) { document.getElementById('apptsContainer').textContent = 'Failed to load appointments'; return; }
+      const appts = await res.json();
+      renderAppts(appts);
+    }
+
+    function renderAppts(appts) {
+      if(!appts || appts.length===0) { document.getElementById('apptsContainer').innerHTML = '<div class="muted">No appointments</div>'; return; }
+
+      const rows = appts.map(a => `
+        <tr>
+          <td>${a.id}</td>
+          <td>${escapeHtml(a.patient?.id ?? '')} - ${escapeHtml(a.patient?.name ?? '')}</td>
+          <td>${escapeHtml(a.provider)}</td>
+          <td>${formatLocal(a.startTime)}</td>
+          <td>${formatLocal(a.endTime)}</td>
+          <td>${escapeHtml(a.status)}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('apptsContainer').innerHTML = `
+        <table>
+          <thead><tr><th>ID</th><th>Patient</th><th>Provider</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    // format ISO string to local human readable
+    function formatLocal(iso) {
+      if(!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleString();
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    document.getElementById('apptForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const patientId = document.getElementById('patientSelect').value;
+      const provider = document.getElementById('provider').value.trim();
+      const start = document.getElementById('start').value;
+      const end = document.getElementById('end').value;
+
+      if(!patientId) return showMsg('Select a patient', true);
+      if(!provider) return showMsg('Provider name is required', true);
+      if(!start || !end) return showMsg('Start and end times are required', true);
+      if(new Date(start) >= new Date(end)) return showMsg('End time must be after start time', true);
+
+      // Build object as API expects: patient: { id: N }, startTime and endTime in ISO format
+      const payload = {
+        patient: { id: Number(patientId) },
+        provider,
+        startTime: new Date(start).toISOString().slice(0,19), // "YYYY-MM-DDTHH:mm:ss"
+        endTime: new Date(end).toISOString().slice(0,19),
+      };
+
+      try {
+        const res = await fetch(`${apiBase}/appointments`, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok) {
+          const text = await res.text();
+          showMsg('Failed: ' + text, true);
+          return;
+        }
+        const created = await res.json();
+        showMsg('Appointment created (ID: ' + created.id + ')');
+        document.getElementById('apptForm').reset();
+        loadPatientsIntoSelect(); // reload select in case of changes
+        fetchAppointments();
+      } catch(err) {
+        showMsg('Network error: ' + err.message, true);
+      }
+    });
+
+    function showMsg(txt, isErr=false){
+      const el = document.getElementById('apptMsg');
+      el.textContent = txt;
+      el.style.color = isErr ? '#b91c1c' : '#065f46';
+      setTimeout(()=>el.textContent = '', 6000);
+    }
+
+    // initial load
+    loadPatientsIntoSelect();
+    fetchAppointments();
+</script>
+</body>
+</html>

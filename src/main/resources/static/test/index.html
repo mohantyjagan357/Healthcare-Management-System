@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>HMS — Landing</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <div class="logo" id="logo">H</div>
+          <div>
+            <div id="hospitalName" style="font-weight: 800; font-size: 18px">
+              Random Hospital
+            </div>
+            <div class="muted" id="tagline" style="font-size: 13px">
+              Compassionate care, modern medicine
+            </div>
+          </div>
+        </div>
+
+        <nav>
+          <a href="#home">Home</a>
+          <a href="#services">Services</a>
+          <a href="#doctors">Doctors</a>
+          <a href="#about">About</a>
+          <a href="#register">Register</a>
+          <a href="#book">Book</a>
+        </nav>
+      </header>
+
+      <main>
+        <section id="home" class="hero">
+          <div class="left">
+            <h1 id="heroTitle">Welcome to Random Hospital</h1>
+            <p class="muted" id="heroDesc">
+              Quality healthcare for the whole family. Book appointments online,
+              view doctor availability, and manage your health records.
+            </p>
+            <div style="margin-top: 12px" class="flex">
+              <button class="cta" onclick="scrollToSection('register')">
+                Register as Patient
+              </button>
+              <button
+                style="
+                  background: #e2e8f0;
+                  border: none;
+                  border-radius: 8px;
+                  padding: 10px 12px;
+                  cursor: pointer;
+                "
+                onclick="scrollToSection('book')"
+              >
+                Book Appointment
+              </button>
+            </div>
+          </div>
+          <div style="width: 320px">
+            <section class="card">
+              <div style="font-weight: 700">Contact</div>
+              <div class="muted" id="contactInfo">
+                Call: +91-9876543210<br />Mon - Sat, 8:00 AM - 6:00 PM
+              </div>
+              <hr />
+              <div style="font-weight: 700">Emergency</div>
+              <div class="muted">24/7 Emergency: +91-9112345678</div>
+            </section>
+          </div>
+        </section>
+
+        <div class="columns" style="margin-top: 18px">
+          <section class="card" id="services">
+            <h2>Services</h2>
+            <div class="services">
+              <div class="service">
+                <strong>Outpatient Care</strong>
+                <div class="muted">General consultations & follow-ups</div>
+              </div>
+              <div class="service">
+                <strong>Inpatient Services</strong>
+                <div class="muted">Short-term and emergency stays</div>
+              </div>
+              <div class="service">
+                <strong>Diagnostics</strong>
+                <div class="muted">Lab tests, X-Ray, MRI</div>
+              </div>
+              <div class="service">
+                <strong>Pharmacy</strong>
+                <div class="muted">On-site medicines & delivery</div>
+              </div>
+              <div class="service">
+                <strong>Surgery</strong>
+                <div class="muted">Minor & major surgeries</div>
+              </div>
+              <div class="service">
+                <strong>Teleconsult</strong>
+                <div class="muted">Video consultations</div>
+              </div>
+            </div>
+          </section>
+
+          <aside>
+            <section class="card">
+              <h3>Quick Stats</h3>
+              <div style="display: flex; gap: 10px">
+                <div style="flex: 1">
+                  <div
+                    style="font-size: 20px; font-weight: 800"
+                    id="totalPatients"
+                  >
+                    0
+                  </div>
+                  <div class="muted small">Registered Patients</div>
+                </div>
+                <div style="flex: 1">
+                  <div
+                    style="font-size: 20px; font-weight: 800"
+                    id="totalAppointments"
+                  >
+                    0
+                  </div>
+                  <div class="muted small">Upcoming Appointments</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card" style="margin-top: 12px">
+              <h3>Location</h3>
+              <div class="muted">123 Health Ave, Wellness City</div>
+              <div style="margin-top: 8px">
+                <!-- Placeholder map — replace src with Google Maps iframe if you have an API key or direct embed -->
+                <img
+                  src="https://via.placeholder.com/300x150?text=Map+Placeholder"
+                  alt="map"
+                  style="width: 100%; border-radius: 6px; margin-top: 8px"
+                />
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <section id="doctors" class="card" style="margin-top: 18px">
+          <h2>Doctors</h2>
+          <p class="muted">
+            Our experienced doctors across specialties. See availability below
+            to book an appointment.
+          </p>
+
+          <div class="doctors-list" id="doctorsList"></div>
+        </section>
+
+        <section id="about" class="card" style="margin-top: 18px">
+          <h2>About & Location</h2>
+          <p class="muted">
+            Random Hospital has been serving the community since 1999 with a
+            focus on patient-first care, fast diagnostics and a compassionate
+            team. We are fully equipped for emergency care and major surgeries.
+          </p>
+
+          <h3 style="margin-top: 12px">Contact & Visiting</h3>
+          <p class="muted">
+            Visiting Hours: 9:00 AM - 5:00 PM (Mon - Sat). For emergencies call
+            +91-9112345678.
+          </p>
+        </section>
+
+        <section id="register" class="card" style="margin-top: 18px">
+          <h2>Patient Registration</h2>
+          <p class="muted">
+            Create your patient record. Once registered you can book
+            appointments and view your registrations.
+          </p>
+
+          <div id="regMsg"></div>
+
+          <label for="pname">Full name</label>
+          <input id="pname" placeholder="Jane Doe" />
+
+          <label for="pcontact">Contact</label>
+          <input id="pcontact" placeholder="+91-9876543210" />
+
+          <label for="paddress">Address</label>
+          <input id="paddress" placeholder="Street, City" />
+
+          <label for="pdob">Date of birth</label>
+          <input id="pdob" type="date" />
+
+          <div style="margin-top: 10px">
+            <button class="cta" onclick="registerPatient()">Register</button>
+          </div>
+          <p class="muted" style="margin-top: 8px">
+            Already registered? Your Patient ID is saved locally for quick
+            booking.
+          </p>
+        </section>
+
+        <section id="book" class="card" style="margin-top: 18px">
+          <h2>Book Appointment</h2>
+          <div class="muted">
+            Choose a doctor and an available slot. You can register here first
+            if you haven't.
+          </div>
+
+          <div style="margin-top: 10px">
+            <label>Patient ID (saved after registration)</label>
+            <input id="patientIdInput" placeholder="e.g., 1" />
+          </div>
+
+          <div style="margin-top: 10px">
+            <label>Choose doctor</label>
+            <select id="doctorSelect"></select>
+          </div>
+
+          <div style="margin-top: 10px">
+            <label>Available slots (click to choose)</label>
+            <div id="slotsContainer" style="min-height: 80px"></div>
+          </div>
+
+          <div style="margin-top: 10px">
+            <button class="cta" onclick="confirmBooking()">
+              Confirm Booking
+            </button>
+          </div>
+
+          <div id="bookingMsg" style="margin-top: 8px"></div>
+
+          <hr style="margin-top: 18px" />
+          <h3>My Upcoming Appointments</h3>
+          <div id="myAppts" class="muted">Loading…</div>
+        </section>
+      </main>
+
+      <footer>
+        <div class="muted">Made with care — Hospital Management Starter</div>
+      </footer>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
