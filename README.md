@@ -1,4 +1,3 @@
-# Smart-Healthcare-Management-System
 
 # 🏥 Healthcare Management System (HMS)
 
@@ -171,12 +170,16 @@ This project is open-source under the **MIT License**.
 
 ---
 
-## 🌟 Author
+## 👨‍💻 Author
+
+<div align="center">
 
 **Soumya Mohanty**
+
 [![GitHub](https://img.shields.io/badge/GitHub-mohantyjagan357-1fffa0?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mohantyjagan357)
 
 *DevOps Engineer · Java Developer · Cloud Native*
-📧 swagjaggy@gmail.com
-💼 LinkedIn: https://www.linkedin.com/in/soumya-mohanty-r/
+
+</div>
+
 ```
